@@ -1,0 +1,132 @@
+programa ejercicio4
+procesos
+  proceso juntarFlores (ES flores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      flores:= flores+1
+  fin
+  proceso depositarFlores (E flores:numero)
+  comenzar
+    repetir flores
+      depositarFlor
+  fin
+  proceso recibirDatos (E av: numero; E ca: numero)
+  comenzar
+    RecibirMensaje (av, fiscal)
+    RecibirMensaje (ca, fiscal)
+  fin
+  proceso limpiarFlores (E av: numero; E ca: numero; E avO: numero; E caO: numero; ES flores: numero)
+  comenzar
+    BloquearEsquina (av,ca)
+    Pos (av,ca)
+    juntarFlores (flores)
+    Pos (avO,caO)
+    LiberarEsquina (av,ca)
+  fin
+  proceso irAvCaDiezDejar (E flores: numero; E avO: numero; E caO: numero)
+  comenzar
+    BloquearEsquina (10,10)
+    Pos (10,10)
+    depositarFlores (flores)
+    Pos (avO,caO)
+    LiberarEsquina (10,10)
+  fin
+  proceso irAvCaDiezJuntar (ES flores: numero; E avO: numero; E caO: numero)
+  comenzar
+    Pos (10,10) { no se bloquea la esquina porque ya todos los robots terminaron su tarea}
+    juntarFlores (flores)
+    Pos (avO,caO)
+  fin
+  proceso enviarIds 
+  comenzar
+    EnviarMensaje (1, r1)
+    EnviarMensaje (2, r2)
+    EnviarMensaje (3, r3)
+  fin
+  proceso quienEs (E id: numero; E av: numero; E ca: numero)
+  comenzar
+    si (id = 1)
+      EnviarMensaje (V, r1)
+      EnviarMensaje (av, r1)
+      EnviarMensaje (ca, r1)
+    sino
+      si (id = 2)
+        EnviarMensaje (V, r2)
+        EnviarMensaje (av, r2)
+        EnviarMensaje (ca, r2)
+      sino 
+        si ( id = 3)
+          EnviarMensaje (V, r3)
+          EnviarMensaje (av, r3)
+          EnviarMensaje (ca, r3)
+  fin
+  proceso enviarFalsos 
+  comenzar
+    EnviarMensaje (F, r1)
+    EnviarMensaje (F, r2)
+    EnviarMensaje (F, r3)
+  fin
+areas
+  areaPC: AreaPC (40,40,60,60)
+  areaC: AreaC (10,10,10,10)
+  area1: AreaP (1,1,1,1)
+  area2: AreaP (2,1,2,1)
+  area3: AreaP (3,1,3,1)
+  area4: AreaP (4,1,4,1)
+robots
+  robot fiscal
+  variables
+    id, flores, av, ca, avO, caO: numero
+  comenzar
+    enviarIds
+    repetir 8
+      Random (id, 1,3)
+      Random (av, 40,60)
+      Random (ca, 40,60)
+      quienEs (id, av, ca)
+    enviarFalsos
+    avO:= PosAv
+    caO:= PosCa
+    irAvCaDiezJuntar (flores, avO, caO)
+    Informar (flores)
+  fin
+  robot florero
+  variables
+    id, flores, av, ca, avO, caO: numero
+    seguir: boolean
+  comenzar
+    flores:=0
+    seguir:= V
+    avO:= PosAv
+    caO:= PosCa
+    RecibirMensaje (id, fiscal)
+    RecibirMensaje (seguir, fiscal)
+    mientras (seguir) {solo si seguir recibe av,ca}
+      recibirDatos (av,ca)
+      limpiarFlores (av, ca, avO, caO, flores)
+      RecibirMensaje (seguir, fiscal)
+    irAvCaDiezDejar (flores, avO, caO)
+  fin    
+variables
+  fiscal: fiscal
+  r1: florero
+  r2: florero
+  r3: florero
+comenzar
+  AsignarArea (fiscal, area4)
+  AsignarArea (fiscal, areaC)
+  AsignarArea (r1, area1)
+  AsignarArea (r1, areaC)
+  AsignarArea (r1, areaPC)
+  AsignarArea (r2, area2)
+  AsignarArea (r2, areaC)
+  AsignarArea (r2, areaPC)
+  AsignarArea (r3, area3)
+  AsignarArea (r3, areaC)
+  AsignarArea (r3, areaPC)
+  Iniciar (fiscal, 4,1)
+  Iniciar (r1,1,1)
+  Iniciar (r2, 2,1)
+  Iniciar (r3,3,1)
+fin
