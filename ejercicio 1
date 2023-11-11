@@ -1,0 +1,161 @@
+programa ejercicio1
+procesos
+  proceso juntarFlores (ES flores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+      flores:= flores+1
+  fin
+  proceso juntarPapeles (ES papeles: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      papeles:= papeles+1
+  fin
+  proceso enviarIds
+  comenzar
+    EnviarMensaje (1, r1)
+    EnviarMensaje (2, r2)
+    EnviarMensaje (3, a1)
+    EnviarMensaje (4, a2)
+  fin
+  proceso recibirPyF (ES totPapel: numero; ES totFlor: numero)
+  variables
+    id, flores, papeles: numero
+  comenzar
+    repetir 4
+      RecibirMensaje (id, *)
+      si (id = 1)
+        RecibirMensaje (flores, r1)
+        totFlor:= totFlor+flores
+      sino
+        si (id = 2)
+          RecibirMensaje (flores, r2)
+          totFlor:= totFlor + flores
+        sino 
+          si (id = 3)
+            RecibirMensaje (papeles, a1)
+            totPapel:= totPapel+papeles
+          sino
+            si (id = 4)
+              RecibirMensaje (papeles, a2)
+              totPapel:= totPapel+papeles
+  fin
+  proceso ganadores (E totPapel: numero; E totFlor: numero)
+  comenzar
+    si (totFlor > totPapel)
+      Informar (1)
+      Informar (2)
+    sino
+      si (totPapel > totFlor)
+        Informar (3)
+        Informar (4)
+      sino
+        Informar (0) {podrian ser iguales}
+  fin
+areas
+  {areaC1: AreaPC (2,98,2,98)}
+  {areaC2: AreaPC (3,98,3,98)}
+  area1: AreaPC (2,1,2,100)
+  area2: AreaPC (3,1,3,100)
+  area3: AreaPC (1,98,100,98) {las 4 areas se dejan parcialmente compartidas porque los robots comparten 2 esquinas, entiendo que podria solo dejar esas 2 compartidas pero seria mas complejo declarar tantas areas} 
+  area4: AreaPC (1,99,100,99)
+  areaF: AreaP (1,1,1,1)
+robots
+  robot fiscal
+  variables
+    totPapel, totFlor, max, maxId: numero
+  comenzar
+    enviarIds
+    max:=0
+    totPapel:=0
+    totFlor:=0
+    recibirPyF (totPapel, totFlor)
+    ganadores (totPapel,totFlor)
+  fin
+  robot rojo
+  variables 
+    flores, id: numero
+  comenzar
+    flores:=0
+    RecibirMensaje (id, fiscal)
+    repetir 96
+      juntarFlores (flores)
+      mover
+    si (id = 1)
+      BloquearEsquina (2,98)
+      Pos (2,98)
+      juntarFlores (flores)
+      BloquearEsquina (2,99) {esta bien bloquear otra mientras esta en una? porque estaria perdiendo tiempo}
+      Pos (2,99)
+      LiberarEsquina (2,98)
+      juntarFlores (flores)
+      mover
+      LiberarEsquina (2,99)
+    sino
+      BloquearEsquina (3,98)
+      Pos (3,98)
+      juntarFlores (flores)
+      BloquearEsquina (3,99)
+      Pos (3,99)
+      LiberarEsquina (3,98)
+      juntarFlores (flores)
+      mover
+      LiberarEsquina (3,99)
+    juntarFlores (flores)
+    EnviarMensaje (id,fiscal)
+    EnviarMensaje (flores, fiscal)
+  fin
+  robot azul
+  variables
+    papeles, id: numero
+  comenzar
+    papeles:=0
+    derecha
+    RecibirMensaje (id, fiscal)
+    juntarPapeles (papeles)
+    si (id = 3)
+      BloquearEsquina (2,98)
+      Pos (2,98)
+      juntarPapeles (papeles)
+      BloquearEsquina (3,98)
+      Pos (3,98)
+      LiberarEsquina (2,98)
+      juntarPapeles (papeles)
+      mover
+      LiberarEsquina (3,98)
+    sino
+      BloquearEsquina (2,99)
+      Pos (2,99)
+      juntarPapeles (papeles)
+      BloquearEsquina (3,99)
+      Pos (3,99)
+      LiberarEsquina (2,99)
+      juntarPapeles (papeles)
+      mover
+      LiberarEsquina (3,99)
+    repetir 96
+      juntarPapeles (papeles)
+      mover
+    EnviarMensaje (id, fiscal)
+    EnviarMensaje (papeles, fiscal)
+  fin
+variables
+  fiscal: fiscal
+  r1: rojo
+  r2: rojo
+  a1: azul
+  a2: azul
+comenzar
+  AsignarArea (r1, area1)
+  AsignarArea (r2, area2)
+  AsignarArea (a1, area3)
+  AsignarArea (a2, area4)
+  AsignarArea (fiscal, areaF)
+  Iniciar (fiscal, 1,1)
+  Iniciar (r1, 2,1)
+  Iniciar (r2, 3,1)
+  Iniciar (a1,1,98)
+  Iniciar (a2,1,99)
+fin 
+{ en teoria no se podrian chocar nunca porque para cuando uno llega los otros ya se fueron peeeeero las bloqueo por las dudas}
