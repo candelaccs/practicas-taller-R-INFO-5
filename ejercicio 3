@@ -1,4 +1,5 @@
-{ no me junta todos los papeles}
+{ no me junta todos los papeles} {dice que no hay papel en la bolsa para depositar}
+
 
 programa ejercicio3
 procesos 
@@ -16,8 +17,9 @@ procesos
   fin
   proceso depositarFlores (E flores: numero)
   comenzar
-    repetir flores
-      depositarFlor
+    si HayFlorEnLaBolsa
+      repetir flores
+        depositarFlor
   fin
   proceso dejarEnEsquina (E flores: numero)
   variables
@@ -58,10 +60,15 @@ robots
         mover
         pasos:= pasos+1
       si (PosAv <> 100)
-        dejarEnEsquina (flores)
-        EnviarMensaje (1, cosechador)
-        flores:=0
-        pasos:=0
+        si (pasos = 5)
+          dejarEnEsquina (flores)
+          EnviarMensaje (1, cosechador)
+          pasos:=0
+        sino
+          si (flores = 10)
+            dejarEnEsquina (flores)
+            EnviarMensaje (1, cosechador)
+            flores:= 0
     EnviarMensaje (0, cosechador)
   fin
   robot cosechador
