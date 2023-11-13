@@ -1,4 +1,3 @@
-se me va el robot fiscal a la esquina (10,10) ????
 programa ejercicio4
 procesos
   proceso juntarFlores (ES flores: numero)
@@ -32,12 +31,6 @@ procesos
     depositarFlores (flores)
     Pos (avO,caO)
     LiberarEsquina (10,10)
-  fin
-  proceso irAvCaDiezJuntar (ES flores: numero; E avO: numero; E caO: numero)
-  comenzar
-    Pos (10,10) { no se bloquea la esquina porque ya todos los robots terminaron su tarea}
-    juntarFlores (flores)
-    Pos (avO,caO)
   fin
   proceso enviarIds 
   comenzar
@@ -78,8 +71,9 @@ areas
 robots
   robot fiscal
   variables
-    id, flores, av, ca, avO, caO: numero
+    id, flores, av, ca, avO, caO, total: numero
   comenzar
+    total:=0
     enviarIds
     repetir 8
       Random (id, 1,3)
@@ -87,10 +81,10 @@ robots
       Random (ca, 40,60)
       quienEs (id, av, ca)
     enviarFalsos
-    avO:= PosAv
-    caO:= PosCa
-    irAvCaDiezJuntar (flores, avO, caO)
-    Informar (flores)
+    repetir 3
+      RecibirMensaje (flores, *)
+      total:= total+flores
+    Informar (total)
   fin
   robot florero
   variables
@@ -104,10 +98,14 @@ robots
     RecibirMensaje (id, fiscal)
     RecibirMensaje (seguir, fiscal)
     mientras (seguir) {solo si seguir recibe av,ca}
-      recibirDatos (av,ca)
+      RecibirMensaje (av, fiscal)
+      RecibirMensaje (ca, fiscal)
       limpiarFlores (av, ca, avO, caO, flores)
       RecibirMensaje (seguir, fiscal)
-    irAvCaDiezDejar (flores, avO, caO)
+    si (flores <> 0) {si no tiene no va}
+      irAvCaDiezDejar (flores, avO, caO,)
+      EnviarMensaje (flores, fiscal)
+    EnviarMensaje (0, fiscal)
   fin    
 variables
   fiscal: fiscal
