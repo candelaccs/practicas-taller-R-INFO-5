@@ -66,7 +66,7 @@ procesos
   variables
     id: numero
   comenzar
-    repetir 3
+    repetir 2
       RecibirMensaje (id,*) {bastaria con solo recibir 3 sin importar de quien? ya que no tiene relevancia solo necesita los 3 mensajes}
   fin
 areas
